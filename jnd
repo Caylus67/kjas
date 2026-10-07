@@ -1,0 +1,14 @@
+Import sqlite3
+import pandas as pd
+
+conn = sqlite3.connect(":memory:")
+cur = conn.cursor()
+
+cur.execute("CREATE TABLE destinations(id INTEGER PRIMARY KEY, name TEXT)")
+cur.execute("CREATE TABLE attractions(id INTEGER PRIMARY KEY, dest_id INTEGER, attraction TEXT)")
+
+cur.executemany("INSERT INTO destinations VALUES(?,?)", [(1,"Paris"),(2,"Tokyo")])
+cur.executemany("INSERT INTO attractions VALUES(?,?,?)", [(1,1,"Eiffel Tower"),(2,2,"Shibuya Crossing")])
+
+df = pd.read_sql_query("SELECT d.name, a.attraction FROM destinations d JOIN attractions a ON d.id=a.dest_id", conn)
+print(df)
